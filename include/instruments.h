@@ -36,6 +36,7 @@ public:
     void smearSquare(double koef);
     void smearTriangle(double koef);
     void testSmearSquare(double koef);
+    void smearCircle(double koef);
     void test();
 };
 

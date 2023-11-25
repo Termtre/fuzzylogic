@@ -95,11 +95,14 @@ void Instruments::testSmearSquare(double koef)
 
     int lenghtSmearX = lx / 2 * koef;
     if (lenghtSmearX > lx / 2) lenghtSmearX = lx / 2;
-    dot borderRightX(s2.x + lenghtSmearX, O.y);
-    dot borderLeftX(s2.x - lenghtSmearX, O.y);
+    int lenghtSmearY = ly / 2 * koef;
+    if (lenghtSmearY > ly / 2) lenghtSmearY = ly / 2;
 
-    std::cout << "BorderRight: " << borderRightX.x << " " << borderRightX.y << std::endl;
-    std::cout << "BorderLeft: " << borderLeftX.x << " " << borderLeftX.y << std::endl;
+    dot borderLess(s2.x - lenghtSmearX, s3.y - lenghtSmearY);
+    dot borderMore(s2.x + lenghtSmearX, s3.y + lenghtSmearY);
+
+    std::cout << "BorderLess: " << borderLess.x << " " << borderLess.y << " " << borderLess.srQ() << std::endl;
+    std::cout << "BorderMore: " << borderMore.x << " " << borderMore.y << " " << borderMore.srQ() << std::endl;
 
     int rr = abs(out.r - in.r);
     int gr = abs(out.g - in.g);
@@ -110,20 +113,24 @@ void Instruments::testSmearSquare(double koef)
     if (gr == 0) g = in.g;
     if (br == 0) b = in.b;
 
-    for (int x = borderLeftX.x + 1; x <= borderRightX.x && x < width; x++)
-    { 
-        int lenghtSide = x - O.x;
-        double f1 = straight_memFunction(x, borderLeftX.x - 1, borderLeftX.x, borderRightX.x); // Левый цвет
-        double f2 = straight_memFunction(x, borderLeftX.x, borderRightX.x, borderRightX.x + 1); // Правый цвет
+    for (dot w = dot(borderLess.x + 1, borderLess.y + 1);
+        w.srQ() <= borderMore.srQ() && w.srQ() < dot(width, height).srQ();
+        w.x++, w.y++)
+    {
+        int lenghtSideY = w.y - O.y;
+        int lenghtSideX = w.x - O.x;
+
+        double f1 = straight_memFunction(w.srQ(), borderLess.srQ() - 1, borderLess.srQ(), borderMore.srQ());
+        double f2 = straight_memFunction(w.srQ(), borderLess.srQ(), borderMore.srQ(), borderMore.srQ() + 1);
 
         if (rr != 0) r = in.r != 0 ? f1 * in.r : f2 * out.r;
         if (gr != 0) g = in.g != 0 ? f1 * in.g : f2 * out.g;
         if (br != 0) b = in.b != 0 ? f1 * in.b : f2 * out.b;
 
-        dot left1(O.x - lenghtSide, O.y - lenghtSide);
-        dot right1(x, left1.y);
-        dot left2(O.x - lenghtSide, O.y + lenghtSide);
-        dot right2(x, left2.y);
+        dot left1(O.x - lenghtSideX, O.y - lenghtSideY);
+        dot right1(w.x, left1.y);
+        dot left2(O.x - lenghtSideX, O.y + lenghtSideY);
+        dot right2(w.x, left2.y);
         dot down1 = left1;
         dot up1 = left2;
         dot down2 = right1;
@@ -134,7 +141,7 @@ void Instruments::testSmearSquare(double koef)
         l2.calcH(down1, up1);
         l3.calcH(left2, right2);
         l4.calcH(down2, up2);
-        
+
         for (dot cur1 = left1, cur2 = left2;
             cur1.x <= right1.x;
             cur1 = std::move(l1.nextDot(cur1)), cur2 = std::move(l3.nextDot(cur2)))
@@ -156,6 +163,87 @@ void Instruments::testSmearSquare(double koef)
                 if (cur2.x >= 0 && cur2.x < width) image[cur2.y * width + cur2.x] = pixel(r, g, b);
             }
         }
+    }
+}
+
+void Instruments::smearCircle(double koef)
+{
+    dot s1, s2, s3;
+    bool flag = false;
+    pixel out, in;
+    int h = 2;
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if ((x + 1) < width && (y + 2) < height)
+            {
+                if (image[y * width + x] != image[y * width + (x + 1)])
+                {
+                    if (h == 2)
+                    {
+                        out = image[y * width + x];
+                        in = image[y * width + (x + 1)];
+                        s1 = std::move(dot(x + 1, y));
+                    }
+                    else if (h == 1) s2 = std::move(dot(x + 1, y));
+                    else if (h == 0) s3 = std::move(dot(x + 1, y));
+
+                    h--;
+
+                    if (h == -1)
+                    {
+                        flag = true;
+                        x = width;
+                        y = height;
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!flag) return;
+
+    std::cout << "s1: " << s1.x << " " << s1.y << std::endl;
+    std::cout << "s2: " << s2.x << " " << s2.y << std::endl;
+    std::cout << "s3: " << s3.x << " " << s3.y << std::endl;
+
+    image[s1.y * width + s1.x] = pixel(0, 0, 0);
+    image[s2.y * width + s2.x] = pixel(0, 0, 0);
+    image[s3.y * width + s3.x] = pixel(0, 0, 0);
+
+    /*int a = 2 * (s2.x - s1.x);
+    int b = 2 * (s2.y - s1.y);
+    int c = 2 * (s3.x - s1.x);
+    int d = 2 * (s3.y - s1.y);
+    int m = s2.x * s2.x - s1.x * s1.x + s2.y * s2.y - s1.y * s1.y;
+    int n = s3.x * s3.x - s1.x * s1.x + s3.y * s3.y - s1.y * s1.y;*/
+
+    int A = s2.x - s1.x;
+    int B = s2.y - s1.y;
+    int C = s3.x - s1.x;
+    int D = s3.y - s1.y;
+    int E = A * (s2.x + s1.x) + B * (s2.y + s1.y);
+    int F = C * (s3.x + s1.x) + D * (s3.y + s1.y);
+    int G = 2 * (A * (s3.y - s2.y) - B * (s3.x - s2.x));
+    if (G == 0) return;
+    int Cx = (D * E - B * F) / G;
+    int Cy = (A * F - C * E) / G;
+
+    dot O((D * E - B * F) / G, (A * F - C * E) / G);
+    int radius = hypot(O.x - s1.x, O.y - s1.y);
+    std::cout << "O: " << O.x << " " << O.y << " radius: " << radius << std::endl;
+    Line l1(dot(O.x, s1.y), O);
+    l1.calcH(dot(O.x, s1.y), O);
+    std::cout << "l1: " << l1.line_type << " " << l1.line_k << " " << l1.line_sdv << " " << l1.line_h << std::endl;
+    
+    for (dot cur = s1; hypot(cur.x - O.x, cur.y - O.y) <= (radius + 1); cur = std::move(l1.nextDot(cur)))
+    {
+        std::cout << hypot(cur.x - O.x, cur.y - O.y) << std::endl;
+        image[cur.y * width + cur.x] = pixel(0, 0, 0);
     }
 }
 

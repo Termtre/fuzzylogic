@@ -17,7 +17,7 @@ int main(int argc, const char * argv[])
     std::time_t result = std::time(nullptr);
     std::string date = std::ctime(&result);
     
-    std::string url = "realSquare.bmp";
+    std::string url = "circle1.bmp";
     std::cout << date << std::endl;
     BMP newImage;
 
@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
         std::cout << newImage.width() << " " << newImage.height() << std::endl;
         Instruments line(newImage);
         //line.createLine();
-        line.testSmearSquare(.3);
+        line.smearCircle(0.8);
         line.exportImage(newImage);
         newImage.exportImage("results/" + url + ".bmp");
     }

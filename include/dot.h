@@ -18,6 +18,12 @@ struct dot
     dot(const dot& other) : x(other.x), y(other.y) {}
     dot(dot&& other) : x(std::move(other.x)), y(std::move(other.y)) {}
 
+    void setDot(int _x, int _y)
+    {
+        x = _x;
+        y = _y;
+    }
+
     const dot& operator =(const dot& other)
     {
         this->x = other.x;
@@ -44,6 +50,10 @@ struct dot
         return this->x != other.x || this->y != other.y;
     }
 
+    int srQ()
+    {
+        return hypot(x, y);
+    }
 };
 
 #endif /* dot_h */

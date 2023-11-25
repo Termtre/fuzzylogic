@@ -54,7 +54,9 @@ struct Line
         {
             //if (cur.x >= cur.y) return dot(cur.x + line_h, line_k * (cur.x + line_h) + line_sdv);
             //else return dot((cur.y + line_h - line_sdv) / line_k, cur.y + line_h);
-            return dot(static_cast<double>(cur.x) + line_h, line_k * (static_cast<double>(cur.x) + line_h) + line_sdv);
+            if (abs(line_k) <= 1) return dot(cur.x + line_h, line_k * (cur.x + line_h) + line_sdv);
+            else return dot((cur.y + line_h - line_sdv) / line_k, cur.y + line_h);
+            //return dot(static_cast<double>(cur.x) + line_h, line_k * (static_cast<double>(cur.x) + line_h) + line_sdv);
         }
         else if (line_type == yconst) return dot(static_cast<double>(cur.x) + line_h, cur.y + line_sdv);
         else return dot(cur.x + line_sdv, static_cast<double>(cur.y) + line_h);
