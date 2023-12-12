@@ -10,15 +10,15 @@
 
 struct dot
 {
-    int x;
-    int y;
+    double x;
+    double y;
     
-    dot() {}
-    dot(int _x, int _y) : x(_x), y(_y) {}
+    dot() : x(0), y(0) {}
+    dot(double _x, double _y) : x(_x), y(_y) {}
     dot(const dot& other) : x(other.x), y(other.y) {}
     dot(dot&& other) : x(std::move(other.x)), y(std::move(other.y)) {}
 
-    void setDot(int _x, int _y)
+    void setDot(double _x, double _y)
     {
         x = _x;
         y = _y;

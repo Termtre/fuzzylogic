@@ -66,7 +66,8 @@ struct Line
     {
         if (line_type == normalLine)
         {
-            line_h = to.x >= from.x ? 1. : -1.;
+            if (abs(line_k) <= 1.) line_h = to.x > from.x ? 1. : -1.;
+            else line_h = to.y > from.y ? 1. : -1.;
         }
         else if (line_type == yconst) line_h = to.x >= from.x ? 1. : -1.;
         else line_h = to.y >= from.y ? 1. : -1.;
