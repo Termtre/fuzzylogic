@@ -14,6 +14,7 @@
 #include "line.h"
 #include "dot.h"
 #include <cmath>
+#include <utility>
 
 class Instruments
 {
@@ -24,6 +25,9 @@ private:
     
 private:
     void triangleSmear(const std::vector<dot>& sides, const pixel& in, const pixel& out);
+    bool findTriangle(dot& s1, dot& s2, dot& s3, dot& O);
+    bool findSquare(dot& s1, dot& s2, dot& s3, dot& s4, dot& O);
+    bool findCircle(dot& O, int& radius);
 
 public:
     Instruments(const BMP& bmpImage);

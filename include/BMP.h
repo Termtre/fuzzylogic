@@ -17,13 +17,13 @@ class BMP
     friend class Instruments;
     
 private:
-    int bmp_width;
-    int bmp_height;
-    int bmp_size;
+    int bmp_width = 0;
+    int bmp_height = 0;
+    int bmp_size = 0;
     int heightColor = 1;
     uchar header[54];
     uchar padding[3] = { 0, 0, 0 };
-    int bmp_padding;
+    int bmp_padding = 0;
     std::vector<pixel> image;
     
 public:

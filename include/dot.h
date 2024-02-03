@@ -8,17 +8,19 @@
 #ifndef dot_h
 #define dot_h
 
+#include <utility>
+
 struct dot
 {
-    double x;
-    double y;
+    int x;
+    int y;
     
     dot() : x(0), y(0) {}
-    dot(double _x, double _y) : x(_x), y(_y) {}
+    dot(int _x, int _y) : x(_x), y(_y) {}
     dot(const dot& other) : x(other.x), y(other.y) {}
-    dot(dot&& other) : x(std::move(other.x)), y(std::move(other.y)) {}
+    dot(dot&& other) noexcept : x(std::move(other.x)), y(std::move(other.y)) {}
 
-    void setDot(double _x, double _y)
+    void setDot(int _x, int _y)
     {
         x = _x;
         y = _y;
@@ -32,7 +34,7 @@ struct dot
         return *this;
     }
 
-    dot& operator =(dot&& other)
+    dot& operator =(dot&& other) noexcept
     {
         this->x = std::move(other.x);
         this->y = std::move(other.y);

@@ -25,11 +25,13 @@
     <ClInclude Include="..\..\..\include\instruments.h" />
     <ClInclude Include="..\..\..\include\line.h" />
     <ClInclude Include="..\..\..\include\pixel.h" />
+    <ClInclude Include="..\..\..\include\smear.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\BMP.cpp" />
     <ClCompile Include="..\..\..\src\fuzzylogic.cpp" />
     <ClCompile Include="..\..\..\src\instruments.cpp" />
+    <ClCompile Include="smear.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

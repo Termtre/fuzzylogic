@@ -8,6 +8,7 @@
 #ifndef pixel_h
 #define pixel_h
 
+#include <utility>
 #define uchar unsigned char
 
 struct pixel
@@ -19,7 +20,7 @@ struct pixel
     pixel() : r(0), g(0), b(0) {}
     pixel(uchar _r, uchar _g, uchar _b) : r(_r), g(_g), b(_b) {}
     pixel(const pixel& other) : r(other.r), g(other.g), b(other.b) {}
-    pixel(pixel&& other) : r(std::move(other.r)), g(std::move(other.g)), b(std::move(other.b)) {}
+    pixel(pixel&& other) noexcept : r(std::move(other.r)), g(std::move(other.g)), b(std::move(other.b)) {}
 
     void setPixel(uchar _r, uchar _g, uchar _b)
     {
@@ -37,7 +38,7 @@ struct pixel
         return *this;
     }
     
-    pixel& operator =(pixel&& other)
+    pixel& operator =(pixel&& other) noexcept
     {
         this->r = std::move(other.r);
         this->g = std::move(other.g);

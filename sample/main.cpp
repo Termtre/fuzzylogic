@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
     std::time_t result = std::time(nullptr);
     std::string date = std::ctime(&result);
     
-    std::string url = "triangle.bmp";
+    std::string url = "circleDiploma.bmp";
     std::cout << date << std::endl;
     BMP newImage;
     double seconds;
@@ -30,7 +30,9 @@ int main(int argc, const char * argv[])
         Instruments line(newImage);
         //line.createLine();
         clock_t start = clock();
-        line.testSmearTriangle(0.5);
+        //line.testSmearTriangle(0.5);
+        //line.testSmearSquare(0.5);
+        line.smearCircle(1.);
         clock_t end = clock();
         seconds = (double)(end - start) / CLOCKS_PER_SEC;
         line.exportImage(newImage);
