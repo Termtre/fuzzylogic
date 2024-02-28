@@ -25,6 +25,26 @@ void Instruments::exportImage(BMP& bmpImage)
         bmpImage.image.push_back(*it);
 }
 
+void Instruments::smearSimpleLine(double koef)
+{
+    pixel in = image[0];
+    pixel out = image[(height - 1) * width];
+
+    Smear changedColor;
+    changedColor.setSmearBorder(0, height - 1);
+    changedColor.setSmearColors(in, out);
+
+    for (int y = 0; y < height; y++)
+    {
+        pixel newColor = std::move(changedColor.changeColor(y));
+
+        for (int x = 0; x < width; x++)
+        {
+            image[y * width + x] = newColor;
+        }
+    }
+}
+
 bool Instruments::findTriangle(dot& s1, dot& s2, dot& s3, dot& O)
 {
     return true;
@@ -36,6 +56,13 @@ bool Instruments::findSquare(dot& s1, dot& s2, dot& s3, dot& s4, dot& O)
 
     for (int y = 0; y < height; y++)
     {
+        if ((y + 1) != height && image[y * width] != image[(y + 1) * width])
+        {
+            s1 = std::move(dot(0, y + 1));
+            flag = true;
+            break;
+        }
+
         for (int x = 0; x < width; x++)
         {
             if ((x + 1) != width && image[y * width + x] != image[y * width + (x + 1)])
@@ -61,7 +88,7 @@ bool Instruments::findSquare(dot& s1, dot& s2, dot& s3, dot& s4, dot& O)
         }
     }
 
-    if (!flag) s2 = std::move(dot(s1.y, width - 1));
+    if (!flag) s2 = std::move(dot(width - 1, s1.y));
     flag = false;
 
     for (int y = s1.y; y < height; y++)
@@ -82,6 +109,11 @@ bool Instruments::findSquare(dot& s1, dot& s2, dot& s3, dot& s4, dot& O)
     int ly = abs(s3.y - s1.y);
 
     O.setDot(s1.x + lx / 2, s1.y + ly / 2);
+
+    std::cout << s1.x << " " << s1.y << std::endl;
+    std::cout << s2.x << " " << s2.y << std::endl;
+    std::cout << s3.x << " " << s3.y << std::endl;
+    std::cout << s4.x << " " << s4.y << std::endl;
 
     return true;
 }
@@ -141,14 +173,69 @@ bool Instruments::findCircle(dot& O, int& radius)
     return true;
 }
 
+void Instruments::smearLine(double koef)
+{
+    dot s1, s2;
+    bool flag = false;
+
+    for (int y = 0; y < height; y++)
+    {
+        if ((y + 1) != height && image[y * width] != image[(y + 1) * width])
+        {
+            s1.setDot(0, y + 1);
+            flag = true;
+            break;
+        }
+    }
+
+    if (!flag) throw "Line didn't find";
+    flag = false;
+
+    for (int y = s1.y; y < height; y++)
+    {
+        if ((y + 1) != height && image[y * width] != image[(y + 1) * width])
+        {
+            s2.setDot(0, y);
+            flag = true;
+            break;
+        }
+    }
+
+    if (!flag) s2.setDot(0, height - 1);
+
+    if (koef == 0.) return;
+
+    int heightLine = (s2.y + s1.y) / 2;
+    int less = 0;
+    int more = (height - (s2.y + s1.y) / 2) * koef;
+
+    pixel in = image[s1.y * width];
+    pixel out = image[0];
+
+    Smear changedColor;
+    changedColor.setSmearBorder(less, more);
+    changedColor.setSmearColors(in, out);
+
+    for (int cur = less; cur <= more; cur++)
+    {
+        pixel newColor = std::move(changedColor.changeColor(cur));
+
+        for (int x = 0; x < width; x++)
+        {
+            if ((heightLine - cur) >= 0) image[(heightLine - cur) * width + x] = newColor;
+            if ((heightLine + cur) < height) image[(heightLine + cur) * width + x] = newColor;
+        }
+    }
+}
+
 void Instruments::testSmearSquare(double koef)
 {
     if (koef < 0) throw "Wrong smear koef";
     dot s1, s2, s3, s4, O;
 
     if (!findSquare(s1, s2, s3, s4, O)) throw "Square wasn't found";
-
-    if (koef == 0) return;
+ 
+    if (koef == 0.) return;
 
     pixel out = image[0];
     pixel in = image[O.y * width + O.x];
@@ -162,25 +249,13 @@ void Instruments::testSmearSquare(double koef)
     if (lenghtSmearY > ly / 2) lenghtSmearY = ly / 2;
 
     dot borderLess(s2.x - lenghtSmearX, s3.y - lenghtSmearY);
-    //dot borderMore(s2.x + lenghtSmearX, s3.y + lenghtSmearY);
     dot borderMore(s3);
 
-    std::cout << "BorderLess: " << borderLess.x << " " << borderLess.y << " " << borderLess.srQ() << std::endl;
-    std::cout << "BorderMore: " << borderMore.x << " " << borderMore.y << " " << borderMore.srQ() << std::endl;
-
-    int rr = abs(out.r - in.r);
-    int gr = abs(out.g - in.g);
-    int br = abs(out.b - in.b);
-    int r = 0, g = 0, b = 0;
-
-    if (rr == 0) r = in.r;
-    if (gr == 0) g = in.g;
-    if (br == 0) b = in.b;
+    Smear changedColor;
+    changedColor.setSmearBorder(borderLess.srQ(), borderMore.srQ());
+    changedColor.setSmearColors(in, out);
 
     Line diagonal(borderLess, borderMore);
-    diagonal.calcH(borderLess, borderMore);
-
-    std::cout << "diagonal: " << diagonal.line_k << " " << diagonal.line_type << std::endl;
 
     for (dot w = std::move(diagonal.nextDot(borderLess));
        (w.x <= borderMore.x && w.y <= borderMore.y) && w.x < width && w.y < height;
@@ -191,54 +266,37 @@ void Instruments::testSmearSquare(double koef)
 
         if (lenghtSideY == 0 || lenghtSideX == 0) continue;
 
-        double f1 = straight_memFunction(w.srQ(), borderLess.srQ() - 1, borderLess.srQ(), borderMore.srQ());
-        double f2 = straight_memFunction(w.srQ(), borderLess.srQ(), borderMore.srQ(), borderMore.srQ() + 1);
+        pixel newColor = std::move(changedColor.changeColor(w.srQ()));
 
-        if (rr != 0) r = in.r != 0 ? f1 * in.r : f2 * out.r;
-        if (gr != 0) g = in.g != 0 ? f1 * in.g : f2 * out.g;
-        if (br != 0) b = in.b != 0 ? f1 * in.b : f2 * out.b;
+        dot leftDown(O.x - lenghtSideX, O.y - lenghtSideY);         // левая нижняя точка
+        dot rightDown(w.x, leftDown.y);                             // правая нижняя точка
+        dot leftUp(O.x - lenghtSideX, w.y);                         // левая верхняя точка
+        dot rightUp(w);                                             // правая верхняя точка
 
-        std::cout << "lenghtSideY: " << lenghtSideY << std::endl;
-        std::cout << "lenghtSideX: " << lenghtSideX << std::endl;
+        Line l1(leftDown, rightDown);
+        Line l2(leftDown, leftUp);
+        Line l3(leftUp, rightUp);
+        Line l4(rightDown, rightUp);
 
-        dot left1(O.x - lenghtSideX, O.y - lenghtSideY);            // левая нижняя точка
-        dot right1(w.x, left1.y);                                   // правая нижняя точка
-        dot left2(O.x - lenghtSideX, w.y);                          // левая верхняя точка
-        dot right2(w);                                              // правая верхняя точка
-        dot down1 = left1;                                          // левая нижняя точка
-        dot up1 = left2;                                            // левая верхняя точка
-        dot down2 = right1;                                         // правая нижняя точка
-        dot up2 = right2;                                           // правая верхняя точка
-
-        Line l1(left1, right1);
-        Line l2(down1, up1);
-        Line l3(left2, right2);
-        Line l4(down2, up2);
-        
-        l1.calcH(left1, right1);
-        l2.calcH(down1, up1);
-        l3.calcH(left2, right2);
-        l4.calcH(down2, up2);
-
-        for (dot cur1 = left1, cur2 = left2;
-            cur1.x <= right1.x;
+        for (dot cur1 = leftDown, cur2 = leftUp;
+            cur1.x <= rightDown.x;
             cur1 = std::move(l1.nextDot(cur1)), cur2 = std::move(l3.nextDot(cur2)))
         {
             if (cur1.x >= 0)
             {
-                if (cur1.y >= 0 && cur1.y < height) image[cur1.y * width + cur1.x] = pixel(r, g, b);
-                if (cur2.y >= 0 && cur2.y < height) image[cur2.y * width + cur2.x] = pixel(r, g, b);
+                if (cur1.y >= 0 && cur1.y < height) image[cur1.y * width + cur1.x] = newColor;
+                if (cur2.y >= 0 && cur2.y < height) image[cur2.y * width + cur2.x] = newColor;
             }
         }
 
-        for (dot cur1 = down1, cur2 = down2;
-            cur1.y <= up1.y;
+        for (dot cur1 = leftDown, cur2 = rightDown;
+            cur1.y <= leftUp.y;
             cur1 = std::move(l2.nextDot(cur1)), cur2 = std::move(l4.nextDot(cur2)))
         {
             if (cur1.y >= 0 && cur1.y < height)
             {
-                if (cur1.x >= 0 && cur1.x < width) image[cur1.y * width + cur1.x] = pixel(r, g, b);
-                if (cur2.x >= 0 && cur2.x < width) image[cur2.y * width + cur2.x] = pixel(r, g, b);
+                if (cur1.x >= 0 && cur1.x < width) image[cur1.y * width + cur1.x] = newColor;
+                if (cur2.x >= 0 && cur2.x < width) image[cur2.y * width + cur2.x] = newColor;
             }
         }
     }
@@ -256,34 +314,24 @@ void Instruments::smearCircle(double koef)
     pixel out = image[0];
     pixel in = image[O.y * width + O.x];
 
-    int rr = abs(out.r - in.r);
-    int gr = abs(out.g - in.g);
-    int br = abs(out.b - in.b);
-    int r = 0, g = 0, b = 0;
-
-    if (rr == 0) r = in.r;
-    if (gr == 0) g = in.g;
-    if (br == 0) b = in.b;
-
     int left = radius * (1. - koef);
     int right = radius + 2;
+    //int right = 2 * radius - left;
+
+    Smear changedColor;
+    changedColor.setSmearBorder(left, right);
+    changedColor.setSmearColors(in, out);
 
     for (int ro = left; ro <= right; ro++)
     {
-        double f1 = straight_memFunction(ro, left - 1, left, right);
-        double f2 = straight_memFunction(ro, left, right, right + 1);
-
-        if (rr != 0) r = in.r != 0 ? f1 * in.r : f2 * out.r;
-        if (gr != 0) g = in.g != 0 ? f1 * in.g : f2 * out.g;
-        if (br != 0) b = in.b != 0 ? f1 * in.b : f2 * out.b;
-
+        pixel newColor = std::move(changedColor.changeColor(ro));
         double anglef = M_PI / static_cast<double>(ro) / 12.;
         for (double f = 0.; f < 2. * M_PI; f += anglef)
         {
             int x1 = ro * cos(f) + O.x;
             int y1 = ro * sin(f) + O.y;
-            if (y1 < height && x1 < width && y1 >= 0 && x1 >= 0 && image[y1 * width + x1] != pixel(r, g, b))
-                image[y1 * width + x1] = pixel(r, g, b);
+            if (y1 < height && x1 < width && y1 >= 0 && x1 >= 0 && image[y1 * width + x1] != newColor)
+                image[y1 * width + x1] = newColor;
         }
     }
 }
@@ -430,6 +478,7 @@ void Instruments::testSmearTriangle(double koef)
     }
 
 }
+
 /*
 void Instruments::smearSquare(double koef)
 {

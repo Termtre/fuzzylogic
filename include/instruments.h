@@ -15,6 +15,7 @@
 #include "dot.h"
 #include <cmath>
 #include <utility>
+#include "smear.h"
 
 class Instruments
 {
@@ -35,10 +36,12 @@ public:
     
     void exportImage(BMP& bmpImage);
     
+    void smearSimpleLine(double koef);
     void createLine();
     void create_square(int side, pixel out_color, pixel in_color);
     void smearSquare(double koef);
     void smearTriangle(double koef);
+    void smearLine(double koef);
     void testSmearSquare(double koef);
     void smearCircle(double koef);
     void testSmearTriangle(double koef);

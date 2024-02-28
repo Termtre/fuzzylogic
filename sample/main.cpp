@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
     std::time_t result = std::time(nullptr);
     std::string date = std::ctime(&result);
     
-    std::string url = "circleDiploma.bmp";
+    std::string url = "arrowa3.bmp";
     std::cout << date << std::endl;
     BMP newImage;
     double seconds;
@@ -31,12 +31,13 @@ int main(int argc, const char * argv[])
         //line.createLine();
         clock_t start = clock();
         //line.testSmearTriangle(0.5);
-        //line.testSmearSquare(0.5);
-        line.smearCircle(1.);
+        //line.testSmearSquare(1.);
+        //line.smearCircle(1.);
+        line.smearSimpleLine(1.0);
         clock_t end = clock();
         seconds = (double)(end - start) / CLOCKS_PER_SEC;
         line.exportImage(newImage);
-        newImage.exportImage("results/" + url + ".bmp");
+        newImage.exportImage("results/" + url);
     }
     catch (const char* msg)
     {

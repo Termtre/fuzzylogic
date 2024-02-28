@@ -1,31 +1,23 @@
 #pragma once
 #include "fuzzylogic.h"
 #include "pixel.h"
-#include "dot.h"
 #include <utility>
 
 class Smear
 {
 private:
-	pixel less;
-	pixel more;
-	pixel middle;
-	int lessBorder;
-	int moreBorder;
-	int rr;				// Разница между красным цветом
-	int gr;				// Разница между зеленым цветом
-	int br;				// Разница между синим цветом
-	double koef;		// Текущий коэффициент размытия
-
-protected:
-	double smearKoef(const int&);
+	pixel less;			// от этого цвета происходит размытие
+	pixel more;			// к этому цвету происходит размытие
+	int lessBorder;		// координата исходного цвета
+	int moreBorder;		// координата конечного цвета
 
 public:
-	Smear(const pixel&, const pixel&);
+	Smear() {}
 	~Smear() {}
 
-	void setSmearBorder(const int&, const int&);
-	void changeColor(pixel&);
-	void clear();
+	void setSmearColors(const pixel&, const pixel&);	// Установка цветов для размытия
+	void setSmearBorder(const int&, const int&);		// Установка границ размытия
+	pixel changeColor(int);								// Размытие
+	void clear();										// Очистка
 
 };

@@ -41,6 +41,8 @@ struct Line
             line_k = static_cast<double>(dot2.y - dot1.y) / static_cast<double>(dot2.x - dot1.x);
             line_sdv = static_cast<double>(dot2.y) - line_k * static_cast<double>(dot2.x);
         }
+
+        calcH(dot1, dot2);
     }
 
     void changeSDV(double sdv)
