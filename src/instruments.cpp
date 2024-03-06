@@ -25,6 +25,34 @@ void Instruments::exportImage(BMP& bmpImage)
         bmpImage.image.push_back(*it);
 }
 
+void Instruments::makeRandomNoise(double k)
+{
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if (static_cast<double>(rand()) / RAND_MAX < k)
+            {
+                double k1 = static_cast<double>(rand()) / RAND_MAX < 0.5 ? 1. : 0.;
+                double k2 = static_cast<double>(rand()) / RAND_MAX < 0.5 ? 1. : 0.;
+                double k3 = static_cast<double>(rand()) / RAND_MAX < 0.5 ? 1. : 0.;
+                uchar r, g, b;
+
+                r = k1 * image[y * width + x].r;
+                g = k2 * image[y * width + x].g;
+                b = k3 * image[y * width + x].b;
+
+                image[y * width + x] = std::move(pixel(r, g, b));
+            }
+        }
+    }
+}
+
+void Instruments::makeBWNoise(double k)
+{
+
+}
+
 void Instruments::smearSimpleLine(double koef)
 {
     pixel in = image[0];

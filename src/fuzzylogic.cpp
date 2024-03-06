@@ -26,14 +26,30 @@ double trapezoid_memFunction(int x, int a, int b, int c, int d)
 
 double S_memFunction(int x, int a, int b, int c)
 {
-    if (x < a) return 0.;
-    else if (a <= x && x <= b) return 2 * pow((static_cast<double>(x - a) / static_cast<double>(b - a)), 2);
-    else if (b < x && x <= c) return 1 - 2 * pow((static_cast<double>(c - x) / static_cast<double>(c - b)), 2);
+    if (x <= a) return 0.;
+    else if (a < x && x <= b) return 2. * pow((static_cast<double>(x - a) / static_cast<double>(c - a)), 2.);
+    else if (b < x && x <= c) return 1. - 2. * pow((static_cast<double>(x - c) / static_cast<double>(c - a)), 2.);
     else return 1.;
 }
 
 double P_memFunction(int x, int a, int b, int c)
 {
     if (x <= c) return S_memFunction(x, c - b, c - b / 2, c);
-    else return 1 - S_memFunction(x, c, c + b / 2, c + b);
+    else return 1. - S_memFunction(x, c, c + b / 2, c + b);
+}
+
+double Laplas_memFunction(int x, int a, int b, int c)
+{
+    if (x < a) return 0.;
+    if (a <= x && x <= b) return exp(-.000005 * (x - b) * (x - b));
+    if (b < x && x <= c) return exp(-.000005 * (x - b) * (x - b));
+    return 0.;
+}
+
+double exp_memFunction(int x, int a, int b, int c)
+{
+    if (x < a) return 0.;
+    if (a <= x && x <= b) return exp(.003 * static_cast<double>(x - b));
+    if (b < x && x <= c) return exp(-.003 * static_cast<double>(x - b));
+    return 0.;
 }

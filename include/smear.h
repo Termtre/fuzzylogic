@@ -10,6 +10,8 @@ private:
 	pixel more;			// к этому цвету происходит размытие
 	int lessBorder;		// координата исходного цвета
 	int moreBorder;		// координата конечного цвета
+	int redDiff, greenDiff, blueDiff;
+	int absRedDiff, absGreenDiff, absBlueDiff;
 
 public:
 	Smear() {}

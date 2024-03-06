@@ -1,9 +1,18 @@
 #include "smear.h"
+#include <iostream>
 
 void Smear::setSmearColors(const pixel& _less, const pixel& _more)
 {
 	less = _less;
 	more = _more;
+
+	redDiff = more.r - less.r;
+	greenDiff = more.g - less.g;
+	blueDiff = more.b - less.b;
+
+	absRedDiff = abs(redDiff);
+	absGreenDiff = abs(greenDiff);
+	absBlueDiff = abs(blueDiff);
 }
 
 void Smear::setSmearBorder(const int& _less, const int& _more)
@@ -14,16 +23,20 @@ void Smear::setSmearBorder(const int& _less, const int& _more)
 
 pixel Smear::changeColor(int cur)
 {
-	double f1 = straight_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
-	double f2 = straight_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
-	int redDiff = abs(more.r - less.r);
-	int greenDiff = abs(more.g - less.g);
-	int blueDiff = abs(more.b - less.b);
+	//double f1 = straight_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
+	//double f2 = straight_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
+	double f1 = Laplas_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
+	double f2 = Laplas_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
+	//double f1 = exp_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
+	//double f2 = exp_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
+
+	//std::cout << f1 << " " << f2 << std::endl;
+
 	uchar red = less.r, green = less.g, blue = less.b;
 
-	if (redDiff) red = (more.r - less.r) > 0 ? redDiff * f2 + less.r :redDiff * f1 + more.r;
-	if (greenDiff) green = (more.g - less.g) > 0 ? greenDiff * f2 + less.g : greenDiff * f1 + more.g;
-	if (blueDiff) blue = (more.b - less.b) > 0 ? blueDiff * f2 + less.b : blueDiff * f1 + more.b;
+	if (redDiff) red = redDiff > 0 ? absRedDiff * f2 + less.r : absRedDiff * f1 + more.r;
+	if (greenDiff) green = greenDiff > 0 ? absGreenDiff * f2 + less.g : absGreenDiff * f1 + more.g;
+	if (blueDiff) blue = blueDiff > 0 ? absBlueDiff * f2 + less.b : absBlueDiff * f1 + more.b;
 
 	return pixel(red, green, blue);
 }

@@ -47,6 +47,20 @@ struct pixel
         return *this;
     }
 
+    pixel& operator *=(double koef)
+    {
+        this->r = koef * this->r;
+        this->g = koef * this->g;
+        this->b = koef * this->b;
+
+        return *this;
+    }
+
+    pixel operator *(double koef) const
+    {
+        return pixel(koef * this->r, koef * this->g, koef * this->g);
+    }
+
     bool operator ==(const pixel& other) const
     {
         return (this->r == other.r) && (this->g == other.g) && (this->b == other.b);

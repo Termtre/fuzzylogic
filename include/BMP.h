@@ -33,10 +33,17 @@ public:
     void importImage(const std::vector<pixel>& _image);
     void importImage(std::string url);
     void exportImage(std::string url);
-    
+    void setImage(int width, int height, const std::vector<pixel>& _image);
+
     int size();
     int width();
     int height();
     bool isEmpty();
     void clear();
+
+    // Экспериментальные функции
+    BMP operator +(const BMP&) const;
+    const BMP& operator =(const BMP&);
+    const bool operator ==(const BMP&) const;
+    const bool operator !=(const BMP&) const;
 };

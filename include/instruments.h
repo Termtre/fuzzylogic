@@ -16,6 +16,7 @@
 #include <cmath>
 #include <utility>
 #include "smear.h"
+#include <random>
 
 class Instruments
 {
@@ -36,6 +37,8 @@ public:
     
     void exportImage(BMP& bmpImage);
     
+    void makeRandomNoise(double);
+    void makeBWNoise(double);
     void smearSimpleLine(double koef);
     void createLine();
     void create_square(int side, pixel out_color, pixel in_color);
