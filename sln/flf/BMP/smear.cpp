@@ -1,4 +1,4 @@
-#include "smear.h"
+﻿#include "smear.h"
 #include <iostream>
 
 void Smear::setSmearColors(const pixel& _less, const pixel& _more)

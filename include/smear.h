@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "fuzzylogic.h"
 #include "pixel.h"
 #include <utility>
@@ -6,10 +6,10 @@
 class Smear
 {
 private:
-	pixel less;			// от этого цвета происходит размытие
-	pixel more;			// к этому цвету происходит размытие
-	int lessBorder;		// координата исходного цвета
-	int moreBorder;		// координата конечного цвета
+	pixel less;			// РѕС‚ СЌС‚РѕРіРѕ С†РІРµС‚Р° РїСЂРѕРёСЃС…РѕРґРёС‚ СЂР°Р·РјС‹С‚РёРµ
+	pixel more;			// Рє СЌС‚РѕРјСѓ С†РІРµС‚Сѓ РїСЂРѕРёСЃС…РѕРґРёС‚ СЂР°Р·РјС‹С‚РёРµ
+	int lessBorder;		// РєРѕРѕСЂРґРёРЅР°С‚Р° РёСЃС…РѕРґРЅРѕРіРѕ С†РІРµС‚Р°
+	int moreBorder;		// РєРѕРѕСЂРґРёРЅР°С‚Р° РєРѕРЅРµС‡РЅРѕРіРѕ С†РІРµС‚Р°
 	int redDiff, greenDiff, blueDiff;
 	int absRedDiff, absGreenDiff, absBlueDiff;
 
@@ -17,9 +17,9 @@ public:
 	Smear() {}
 	~Smear() {}
 
-	void setSmearColors(const pixel&, const pixel&);	// Установка цветов для размытия
-	void setSmearBorder(const int&, const int&);		// Установка границ размытия
-	pixel changeColor(int);								// Размытие
-	void clear();										// Очистка
+	void setSmearColors(const pixel&, const pixel&);	// РЈСЃС‚Р°РЅРѕРІРєР° С†РІРµС‚РѕРІ РґР»СЏ СЂР°Р·РјС‹С‚РёСЏ
+	void setSmearBorder(const int&, const int&);		// РЈСЃС‚Р°РЅРѕРІРєР° РіСЂР°РЅРёС† СЂР°Р·РјС‹С‚РёСЏ
+	pixel changeColor(int);								// Р Р°Р·РјС‹С‚РёРµ
+	void clear();										// РћС‡РёСЃС‚РєР°
 
 };
