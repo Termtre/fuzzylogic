@@ -25,12 +25,14 @@ pixel Smear::changeColor(int cur)
 {
 	//double f1 = straight_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
 	//double f2 = straight_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
-	double f1 = Laplas_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
-	double f2 = Laplas_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
+	//double f1 = Laplas_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
+	//double f2 = Laplas_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
 	//double f1 = exp_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
 	//double f2 = exp_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
+	double f1 = parabola_memFunction(cur, lessBorder - 1, lessBorder, moreBorder);
+	double f2 = parabola_memFunction(cur, lessBorder, moreBorder, moreBorder + 1);
 
-	//std::cout << f1 << " " << f2 << std::endl;
+	std::cout << f1 << " " << f2 << std::endl;
 
 	uchar red = less.r, green = less.g, blue = less.b;
 

@@ -20,4 +20,6 @@ double P_memFunction(int x, int a, int b, int c);
 double Laplas_memFunction(int x, int a, int b, int c);
 // Экспоненциальная функция принадлежности
 double exp_memFunction(int x, int a, int b, int c);
+// Экспоненциальная функция принадлежности
+double parabola_memFunction(int x, int a, int b, int c);
 

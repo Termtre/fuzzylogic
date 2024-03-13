@@ -38,6 +38,7 @@ public:
     void exportImage(BMP& bmpImage);
     
     void makeRandomNoise(double);
+    void makeAreaNoise(double);
     void makeBWNoise(double);
     void smearSimpleLine(double koef);
     void createLine();

@@ -48,6 +48,20 @@ void Instruments::makeRandomNoise(double k)
     }
 }
 
+void Instruments::makeAreaNoise(double k)
+{
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if (static_cast<double>(rand()) / RAND_MAX < k)
+            {
+
+            }
+        }
+    }
+}
+
 void Instruments::makeBWNoise(double k)
 {
 

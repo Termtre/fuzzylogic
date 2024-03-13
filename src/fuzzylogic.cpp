@@ -53,3 +53,11 @@ double exp_memFunction(int x, int a, int b, int c)
     if (b < x && x <= c) return exp(-.003 * static_cast<double>(x - b));
     return 0.;
 }
+
+double parabola_memFunction(int x, int a, int b, int c)
+{
+    if (x < a) return 0.;
+    if (a <= x && x <= b) return static_cast<double>((x - a) * (x - a)) / static_cast<double>(b - a) / static_cast<double>(b - a);
+    if (b < x && x <= c) return static_cast<double>((x - c) * (x - c)) / static_cast<double>(b - c) / static_cast<double>(b - c);
+    return 0.;
+}

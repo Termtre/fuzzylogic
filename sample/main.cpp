@@ -21,37 +21,40 @@ int main(int argc, const char * argv[])
     std::time_t result = std::time(nullptr);
     std::string date = std::ctime(&result);
     
-    std::string url = "loh";
-    std::string url2 = "Mandrill";
+    std::string url = "Car";
+    std::string url2 = "exponenta";
     std::string url3 = "sumExperiment2";
-    std::string url4 = "toclear";
+    std::string url4 = "trianglesmear";
+    std::string url5 = "expxsquare";
     std::string bmp = ".bmp";
     std::cout << date << std::endl;
     BMP newImage;
     BMP newImage2;
     BMP newImage3;
     BMP newImage4;
+    BMP newImage5;
     double seconds;
     try
     {
 
         newImage.importImage("source/" + url + bmp);
-        newImage2.importImage("source/" + url2 + bmp);
+        //newImage2.importImage("source/" + url2 + bmp);
         //newImage4.importImage("source/" + url4 + bmp);
+        //newImage5.importImage("source/" + url5 + bmp);
         std::cout << newImage.width() << " " << newImage.height() << std::endl;
-        //Instruments line(newImage);
+        Instruments line(newImage);
         //line.createLine();
         clock_t start = clock();
-        newImage3 = newImage2 + newImage;// +newImage4;
+        //newImage3 = newImage + newImage5 + newImage4 + newImage2;
         //line.testSmearTriangle(0.5);
         //line.testSmearSquare(1.);
         //line.smearCircle(1.);
         //line.smearSimpleLine(1.0);
-        //line.makeRandomNoise(.05);
+        line.makeRandomNoise(.1);
         clock_t end = clock();
         seconds = (double)(end - start) / CLOCKS_PER_SEC;
-        //line.exportImage(newImage);
-        newImage3.exportImage("results/" + url + url2 + bmp);
+        line.exportImage(newImage);
+        newImage.exportImage("results/" + url + "withNoise01" + bmp);
     }
     catch (const char* msg)
     {
